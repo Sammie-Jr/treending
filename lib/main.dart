@@ -39,7 +39,11 @@ class _MyHomePageState extends State<MyHomePage> {
           Center(
             child: const Text(
               'Welcome!',
-              style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+              style: TextStyle(
+                fontSize: 30,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'Poppins',
+              ),
             ),
           ),
         ],

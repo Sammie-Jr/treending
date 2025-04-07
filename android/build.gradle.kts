@@ -1,16 +1,20 @@
 buildscript {
-
+    extensions.add("kotlinVersion", "1.7.10")
     repositories {
-      // Make sure that you have the following two repositories
-      google()  // Google's Maven repository
-      mavenCentral()  // Maven Central repository
+        google()
+        mavenCentral()
     }
-
     dependencies {
-      classpath (" com.google.gms:google-services:4.4.2")
+        // When bumping, also update:
+        //  * ndkVersion in FlutterExtension in packages/flutter_tools/gradle/src/main/groovy/flutter.groovy
+        //  * AGP version in the buildscript block in packages/flutter_tools/gradle/src/main/groovy/flutter.groovy
+        //  * AGP version constants in packages/flutter_tools/lib/src/android/gradle_utils.dart
+        //  * AGP version in dependencies block in packages/flutter_tools/gradle/build.gradle.kts
+        classpath("com.android.tools.build:gradle:7.3.0")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10")
+        classpath("com.google.gms:google-services:4.4.2")
     }
 }
-
 
 allprojects {
     repositories {

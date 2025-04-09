@@ -17,6 +17,13 @@ class _LoginViewState extends State<LoginView> {
   TextEditingController passController = TextEditingController();
   bool passToggle = true;
   @override
+  void dispose() {
+    super.dispose();
+    emailController.dispose();
+    passController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[300],
@@ -73,7 +80,7 @@ class _LoginViewState extends State<LoginView> {
               Padding(
                 padding: const EdgeInsets.only(top: 5),
                 child: textField(
-                  'Email',
+                  'Email address',
                   '@example.com',
                   emailController,
                   // Function to create a text field with the specified label and hint text
@@ -90,6 +97,7 @@ class _LoginViewState extends State<LoginView> {
                   },
                 ),
               ),
+
               textField(
                 'Password',
                 'Enter 6 digits password',

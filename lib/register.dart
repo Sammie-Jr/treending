@@ -1,6 +1,7 @@
 // ignore_for_file: avoid_print
 
 import 'package:flutter/material.dart';
+import 'package:treending/Services/authservice.dart';
 import 'package:treending/login.dart';
 
 class RegistrationView extends StatefulWidget {
@@ -12,8 +13,10 @@ class RegistrationView extends StatefulWidget {
 
 class _RegistrationViewState extends State<RegistrationView> {
   final _formField = GlobalKey<FormState>();
+  final _auth = Authservice();
   TextEditingController emailController = TextEditingController();
   TextEditingController passController = TextEditingController();
+  TextEditingController nameController = TextEditingController();
   bool passToggle = true;
   @override
   Widget build(BuildContext context) {
@@ -73,23 +76,38 @@ class _RegistrationViewState extends State<RegistrationView> {
               Padding(
                 padding: const EdgeInsets.only(top: 5),
                 child: textField(
-                  'Email Address',
-
-                  '@example.com',
-                  emailController,
-                  // Function to create a text field with the specified label and hint text
-                  TextInputType.emailAddress,
-                  (emailController) {
-                    if (emailController == null || emailController.isEmpty) {
-                      return 'Please enter your email';
-                    } else if (!RegExp(
-                      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
-                    ).hasMatch(emailController)) {
-                      return 'Please enter a valid email address';
+                  'Name',
+                  'Enter your name',
+                  nameController,
+                  TextInputType.name,
+                  (nameController) {
+                    if (nameController == null || nameController.isEmpty) {
+                      return 'please enter your name';
+                    } else if (nameController.length < 2) {
+                      return 'Name cannot be less than 3';
                     }
                     return null;
                   },
                 ),
+              ),
+
+              textField(
+                'Email Address',
+
+                '@example.com',
+                emailController,
+                // Function to create a text field with the specified label and hint text
+                TextInputType.emailAddress,
+                (emailController) {
+                  if (emailController == null || emailController.isEmpty) {
+                    return 'Please enter your email';
+                  } else if (!RegExp(
+                    r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+                  ).hasMatch(emailController)) {
+                    return 'Please enter a valid email address';
+                  }
+                  return null;
+                },
               ),
               textField(
                 'Password',
@@ -130,42 +148,10 @@ class _RegistrationViewState extends State<RegistrationView> {
                 padding: const EdgeInsets.only(top: 80),
                 child: ElevatedButton(
                   onPressed: () {
-                    // Registration action her
+                    // Registration action here
                     if (_formField.currentState!.validate()) {
-                      // Perform registration logic here
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => LoginView()),
-                      );
+                      register();
                     }
-
-                    print('Email: ${emailController.text}');
-                    print('Password: ${passController.text}');
-
-                    // Show a success message
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        backgroundColor: Colors.grey[300],
-                        behavior: SnackBarBehavior.floating,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-
-                        margin: EdgeInsets.only(
-                          bottom: 50,
-                          left: 40,
-                          right: 40,
-                        ),
-
-                        content: Center(
-                          child: Text(
-                            'Successful!',
-                            style: TextStyle(color: Colors.black),
-                          ),
-                        ),
-                        duration: Duration(seconds: 2),
-                      ),
-                    );
                   },
                   style: ElevatedButton.styleFrom(
                     elevation: 3,
@@ -196,6 +182,28 @@ class _RegistrationViewState extends State<RegistrationView> {
         ),
       ),
     );
+  }
+
+  register() async {
+    // Function to handle user registration
+    try {
+      final user = await _auth.createUserWithEmailAndPassword(
+        emailController.text,
+        passController.text,
+      );
+      if (user != null) {
+        return snackBar('Registration Successful');
+      }
+      print('User registered successfully');
+      Navigator.pushReplacement(
+        // ignore: use_build_context_synchronously
+        context,
+        MaterialPageRoute(builder: (context) => const LoginView()),
+      );
+    } catch (error) {
+      print('Error: $error');
+      // Handle error here
+    }
   }
 }
 
@@ -247,5 +255,19 @@ Widget textField(
         ),
       ),
     ),
+  );
+}
+
+snackBar(String message) {
+  // Function to show a snackbar with the specified message
+  return SnackBar(
+    backgroundColor: Colors.grey[300],
+    behavior: SnackBarBehavior.floating,
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    margin: EdgeInsets.only(bottom: 50, left: 40, right: 40),
+    content: Center(
+      child: Text(message, style: TextStyle(color: Colors.black)),
+    ),
+    duration: Duration(seconds: 10),
   );
 }
